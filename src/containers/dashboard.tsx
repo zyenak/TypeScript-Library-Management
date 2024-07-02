@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Typography, Button } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useUser } from "../context/user-context";
@@ -10,7 +10,11 @@ const BooksList: React.FC = () => {
   const { isAdmin, user, borrowBook, returnBook, borrowedBooks, users, deleteUser } = useUser();
   const { books, setBooks } = useContext(BooksContext);
   const [activeBookIsbn, setActiveBookIsbn] = useState<string | null>(null);
-  
+
+  useEffect(() => {
+    console.log("Borrowed Books:", borrowedBooks);
+  }, [borrowedBooks]);
+
   const handleBookBorrow = (book: any) => {
     setActiveBookIsbn(book.isbn);
     borrowBook(book.isbn);
@@ -82,11 +86,13 @@ const BooksList: React.FC = () => {
       header: "Issued Books",
       render: (user: any) =>
         user.borrowedBooks && user.borrowedBooks.length > 0 ? (
-          user.borrowedBooks.map((book: any) => (
-            <div key={book.isbn}>
-              {book.name} ({book.isbn})
-            </div>
-          ))
+          <div>
+            {user.borrowedBooks.map((book: any) => (
+              <span key={book.isbn}>
+                {book.name} ({book.isbn}),{" "}
+              </span>
+            ))}
+          </div>
         ) : (
           "No books issued"
         ),
@@ -172,7 +178,7 @@ const BooksList: React.FC = () => {
             <CustomTable
               rows={borrowedBooks}
               columns={borrowedBookColumns}
-             
+
             />
           ) : (
             <Typography variant="h5">No books issued!</Typography>

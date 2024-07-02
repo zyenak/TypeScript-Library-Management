@@ -2,22 +2,20 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import { Snackbar } from "@mui/material";
 import { BooksContext, BooksContextType } from "./books-context";
 
-// Define the user interface
+
 export interface User {
   username: string;
   password: string;
   role: string;
-  borrowedBooks?: any[]; // Assuming borrowedBooks is an array of any type
+  borrowedBooks: any[]; 
 }
 
-// Define mock users
 const mockUsers: User[] = [
-  { username: "admin", password: "admin", role: "admin" },
-  { username: "user", password: "user", role: "user" },
-  // Add more mock users as needed
+  { username: "admin", password: "admin", role: "admin", borrowedBooks: [] },
+  { username: "user", password: "user", role: "user", borrowedBooks: [] },
 ];
 
-// Define the context type
+
 interface UserContextType {
   user: User | null;
   users: User[];
@@ -44,7 +42,6 @@ export const useUser = () => {
   return context;
 };
 
-// UserProvider component
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(mockUsers); // Using mockUsers
@@ -52,7 +49,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [borrowedBooks, setBorrowedBooks] = useState<any[]>([]);
   const { books, setBooks } = useContext<BooksContextType>(BooksContext); // Access books and setBooks from BooksContext
 
-  // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
@@ -64,6 +60,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedUser = JSON.parse(localStorage.getItem("user") || "null");
     if (storedUser) {
       setUser(storedUser);
+      setBorrowedBooks(storedUser.borrowedBooks || []); 
     }
   }, []);
 
@@ -72,14 +69,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginUser = (username: string, password: string) => {
-    const foundUser = users.find(
-      (user) => user.username === username && user.password === password
-    );
+    const foundUser = users.find((user) => user.username === username && user.password === password);
     if (foundUser) {
       setSnackbarMessage("Logged in successfully");
       setSnackbarOpen(true);
       setUser(foundUser);
       localStorage.setItem("user", JSON.stringify(foundUser));
+      setBorrowedBooks(foundUser.borrowedBooks || []); 
     } else {
       setSnackbarMessage("Invalid credentials");
       setSnackbarOpen(true);
@@ -88,7 +84,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logoutUser = () => {
     setUser(null);
-    setBorrowedBooks([]); // Clear borrowed books on logout
+    setBorrowedBooks([]);
     localStorage.removeItem("user");
     setSnackbarMessage("Logged out successfully");
     setSnackbarOpen(true);
@@ -97,18 +93,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const borrowBook = (isbn: string) => {
     const bookToBorrow = books.find((book: any) => book.isbn === isbn);
     if (bookToBorrow && bookToBorrow.quantity > 0) {
-      // Update book availability
       const updatedBook = { ...bookToBorrow, quantity: bookToBorrow.quantity - 1 };
       setBooks((prevBooks: any) =>
         prevBooks.map((book: any) =>
           book.isbn === isbn ? updatedBook : book
         )
       );
-      // Update borrowed books for the user
+      
       setUser((prevUser: any) => {
         const updatedBorrowedBooks = [...(prevUser.borrowedBooks || []), bookToBorrow];
         setBorrowedBooks(updatedBorrowedBooks);
-        return { ...prevUser, borrowedBooks: updatedBorrowedBooks };
+        // Update local storage with new borrowed books
+        const updatedUser = { ...prevUser, borrowedBooks: updatedBorrowedBooks };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        // Update mockUsers array
+        const updatedMockUsers = users.map((user) =>
+          user.username === prevUser.username ? updatedUser : user
+        );
+        setUsers(updatedMockUsers);
+        return updatedUser;
       });
       setSnackbarMessage("Book borrowed successfully");
       setSnackbarOpen(true);
@@ -117,10 +120,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSnackbarOpen(true);
     }
   };
-
+  
   const returnBook = (isbn: string) => {
-    const bookToReturn = borrowedBooks.find((book) => book.isbn === isbn);
-    if (bookToReturn) {
+    const indexToRemove = borrowedBooks.findIndex((book) => book.isbn === isbn);
+    if (indexToRemove !== -1) {
       setBooks((prevBooks: any) =>
         prevBooks.map((book: any) =>
           book.isbn === isbn
@@ -128,19 +131,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             : book
         )
       );
-
-      const updatedBorrowedBooks = borrowedBooks.filter((book) => book.isbn !== isbn);
+  
+      const updatedBorrowedBooks = [...borrowedBooks];
+      updatedBorrowedBooks.splice(indexToRemove, 1);
       setBorrowedBooks(updatedBorrowedBooks);
 
       setUser((prevUser: any) => {
-        const updatedUser = {
-          ...prevUser,
-          borrowedBooks: updatedBorrowedBooks,
-        };
+        const updatedUser = { ...prevUser, borrowedBooks: updatedBorrowedBooks };
         localStorage.setItem("user", JSON.stringify(updatedUser));
+        const updatedMockUsers = users.map((user) =>
+          user.username === prevUser.username ? updatedUser : user
+        );
+        setUsers(updatedMockUsers);
         return updatedUser;
       });
-
+  
       setSnackbarMessage("Book returned successfully");
       setSnackbarOpen(true);
     } else {
@@ -148,6 +153,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSnackbarOpen(true);
     }
   };
+  
+  
 
   const addUser = (newUser: User) => {
     // Ensure username is unique

@@ -21,7 +21,7 @@ import { BooksContext } from "../context/books-context";
 import CustomForm, { FormField } from "../components/forms/custom-form";
 import WithAdminProtector from "../middleware/admin-protector";
 import { WithLoginProtector } from "../middleware/login-protector";
-import withInputValidation from '../hoc/input-error-handling';
+import withInputValidation from '../HOC/input-error-handling';
 
 const AppLayout: React.FC = () => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
