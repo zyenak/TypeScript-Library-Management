@@ -19,6 +19,8 @@ import BooksList from "../containers/dashboard";
 import { LoginDialog } from "../components/login/login-dialog";
 import { BooksContext } from "../context/books-context";
 import CustomForm, { FormField } from "../components/forms/custom-form";
+import WithAdminProtector from "../middleware/admin-protector";
+import { WithLoginProtector } from "../middleware/login-protector";
 
 const AppLayout: React.FC = () => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
@@ -26,7 +28,6 @@ const AppLayout: React.FC = () => {
   const { user, loginUser, logoutUser, addUser } = useUser();
   const { addBook, updateBook } = useContext(BooksContext);
   const navigate = useNavigate();
-  const { bookIsbn } = useParams<{ bookIsbn?: string }>(); // Make bookIsbn optional
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -171,37 +172,49 @@ const AppLayout: React.FC = () => {
         <Route
           path="/admin/books/add"
           element={
-            <CustomForm
-              formType="book"
-              initialData={initialBookState}
-              toUpdate={false}
-              onSubmit={handleBookSubmit}
-              fields={bookFields}
-            />
+            <WithLoginProtector>
+              <WithAdminProtector>
+                <CustomForm
+                  formType="book"
+                  initialData={initialBookState}
+                  toUpdate={false}
+                  onSubmit={handleBookSubmit}
+                  fields={bookFields}
+                />
+              </WithAdminProtector>
+            </WithLoginProtector>
           }
         />
         <Route
           path="/admin/users/add"
           element={
-            <CustomForm
-              formType="user"
-              initialData={initialUserState}
-              toUpdate={false}
-              onSubmit={handleUserSubmit}
-              fields={userFields}
-            />
+            <WithLoginProtector>
+              <WithAdminProtector>
+                <CustomForm
+                  formType="user"
+                  initialData={initialUserState}
+                  toUpdate={false}
+                  onSubmit={handleUserSubmit}
+                  fields={userFields}
+                />
+              </WithAdminProtector>
+            </WithLoginProtector>
           }
         />
         <Route
           path="/admin/books/:bookIsbn/edit"
           element={
-            <CustomForm
-              formType="book"
-              initialData={initialBookState}
-              toUpdate={true}
-              onSubmit={handleBookSubmit}
-              fields={bookFields}
-            />
+            <WithLoginProtector>
+              <WithAdminProtector>
+                <CustomForm
+                  formType="book"
+                  initialData={initialBookState}
+                  toUpdate={true}
+                  onSubmit={handleBookSubmit}
+                  fields={bookFields}
+                />
+              </WithAdminProtector>
+            </WithLoginProtector>
           }
         />
         <Route path="*" element={<Navigate to="/books" replace />} />
