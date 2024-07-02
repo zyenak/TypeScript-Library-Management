@@ -21,6 +21,7 @@ import { BooksContext } from "../context/books-context";
 import CustomForm, { FormField } from "../components/forms/custom-form";
 import WithAdminProtector from "../middleware/admin-protector";
 import { WithLoginProtector } from "../middleware/login-protector";
+import withInputValidation from '../hoc/input-error-handling';
 
 const AppLayout: React.FC = () => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
@@ -92,6 +93,10 @@ const AppLayout: React.FC = () => {
     { label: "Password", name: "password", type: "password", required: true },
     { label: "Role", name: "role", type: "text", required: true },
   ];
+
+  // Wrap CustomForm with withInputValidation HOC
+  const ValidatedBookForm = withInputValidation(CustomForm);
+  const ValidatedUserForm = withInputValidation(CustomForm);
 
   return (
     <>
@@ -174,13 +179,14 @@ const AppLayout: React.FC = () => {
           element={
             <WithLoginProtector>
               <WithAdminProtector>
-                <CustomForm
+                <ValidatedBookForm
                   formType="book"
                   initialData={initialBookState}
                   toUpdate={false}
                   onSubmit={handleBookSubmit}
-                  fields={bookFields}
-                />
+                  fields={bookFields} validateForm={function (formData: any, fields: FormField[]): boolean {
+                    throw new Error("Function not implemented.");
+                  } } errors={undefined}                />
               </WithAdminProtector>
             </WithLoginProtector>
           }
@@ -190,13 +196,14 @@ const AppLayout: React.FC = () => {
           element={
             <WithLoginProtector>
               <WithAdminProtector>
-                <CustomForm
+                <ValidatedUserForm
                   formType="user"
                   initialData={initialUserState}
                   toUpdate={false}
                   onSubmit={handleUserSubmit}
-                  fields={userFields}
-                />
+                  fields={userFields} validateForm={function (formData: any, fields: FormField[]): boolean {
+                    throw new Error("Function not implemented.");
+                  } } errors={undefined}                />
               </WithAdminProtector>
             </WithLoginProtector>
           }
@@ -206,13 +213,14 @@ const AppLayout: React.FC = () => {
           element={
             <WithLoginProtector>
               <WithAdminProtector>
-                <CustomForm
+                <ValidatedBookForm
                   formType="book"
                   initialData={initialBookState}
                   toUpdate={true}
                   onSubmit={handleBookSubmit}
-                  fields={bookFields}
-                />
+                  fields={bookFields} validateForm={function (formData: any, fields: FormField[]): boolean {
+                    throw new Error("Function not implemented.");
+                  } } errors={undefined}                />
               </WithAdminProtector>
             </WithLoginProtector>
           }

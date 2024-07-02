@@ -1,5 +1,5 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent, useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect, ChangeEvent, FormEvent, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Paper,
   Container,
@@ -12,25 +12,26 @@ import {
   MenuItem,
   Typography,
   SelectChangeEvent,
-} from "@mui/material";
-import classes from "./styles.module.css";
-import { BooksContext } from "../../context/books-context";
+} from '@mui/material';
+import classes from './styles.module.css';
+import { BooksContext } from '../../context/books-context';
 
 export type FormField =
-  | { label: string; name: string; type: "text" | "number" | "password"; required: boolean; options?: undefined }
-  | { label: string; name: string; type: "select"; required: boolean; options: string[] };
+  | { label: string; name: string; type: 'text' | 'number' | 'password'; required: boolean; options?: undefined }
+  | { label: string; name: string; type: 'select'; required: boolean; options: string[] };
 
-interface CustomFormProps {
-  formType: "book" | "user";
+export interface CustomFormProps {
+  formType: 'book' | 'user';
   initialData: any;
   toUpdate: boolean;
   onSubmit: (data: any, toUpdate: boolean) => void; // Remove bookIsbn parameter from onSubmit
   fields: FormField[];
+  validateForm: (formData: any, fields: FormField[]) => boolean;
+  errors: any;
 }
 
-const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate, onSubmit, fields }) => {
+const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate, onSubmit, fields, validateForm, errors }) => {
   const [formData, setFormData] = useState(initialData);
-  const [errors, setErrors] = useState<any>({});
   const { books } = useContext(BooksContext);
   const navigate = useNavigate();
   const { bookIsbn } = useParams<{ bookIsbn?: string }>(); // Make bookIsbn optional
@@ -47,22 +48,13 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
     }
   }, [initialData, bookIsbn, toUpdate]);
 
-  const validateForm = (event: ChangeEvent<{ name: string; value: string }>) => {
-    const { name, value } = event.target;
-    const field = fields.find((f) => f.name === name);
-    if (field?.required && !value.trim()) {
-      setErrors((prevErrors: any) => ({ ...prevErrors, [name]: `${field.label} can't be empty` }));
-    } else if (field?.type === "number" && isNaN(Number(value))) {
-      setErrors((prevErrors: any) => ({ ...prevErrors, [name]: "Only numbers are allowed" }));
-    } else {
-      setErrors((prevErrors: any) => ({ ...prevErrors, [name]: "" }));
-    }
-  };
-
   const formSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSubmit(formData, toUpdate);
-    navigate("/books");
+    const isValid = validateForm(formData, fields);
+    if (isValid) {
+      onSubmit(formData, toUpdate);
+      navigate('/books');
+    }
   };
 
   const handleChange = (event: ChangeEvent<{ name: string; value: string }>) => {
@@ -70,21 +62,16 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
     setFormData({ ...formData, [name]: value });
   };
 
-  const isInvalid = fields.some((field) => {
-    const value = formData[field.name];
-    return field.required && (!value || typeof value !== 'string' || value.trim() === '');
-  });
-
   return (
     <Container component={Paper} className={classes.wrapper}>
       <Typography className={classes.pageHeader} variant="h5">
-        {formType === "book" ? (bookIsbn ? "Update Book" : "Add Book") : "Add User"}
+        {formType === 'book' ? (bookIsbn ? 'Update Book' : 'Add Book') : 'Add User'}
       </Typography>
       <form noValidate autoComplete="off" onSubmit={formSubmit}>
         <FormGroup>
           {fields.map((field) => (
             <FormControl className={classes.mb2} key={field.name}>
-              {field.type === "select" ? (
+              {field.type === 'select' ? (
                 <>
                   <InputLabel>{field.label}</InputLabel>
                   <Select
@@ -108,7 +95,6 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
                   required={field.required}
                   value={formData[field.name]}
                   onChange={handleChange}
-                  onBlur={validateForm}
                   error={!!errors[field.name]}
                   helperText={errors[field.name]}
                 />
@@ -126,13 +112,8 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={formType === "book" && !bookIsbn ? isInvalid : false}
-          >
-            {formType === "book" ? (bookIsbn ? "Update Book" : "Add Book") : "Add User"}
+          <Button type="submit" variant="contained" color="primary">
+            {formType === 'book' ? (bookIsbn ? 'Update Book' : 'Add Book') : 'Add User'}
           </Button>
         </div>
       </form>
