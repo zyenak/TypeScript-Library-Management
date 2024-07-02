@@ -27,10 +27,9 @@ export interface CustomFormProps {
   onSubmit: (data: any, toUpdate: boolean) => void; // Remove bookIsbn parameter from onSubmit
   fields: FormField[];
   validateForm: (formData: any, fields: FormField[]) => boolean;
-  errors: any;
 }
 
-const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate, onSubmit, fields, validateForm, errors }) => {
+const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate, onSubmit, fields, validateForm }) => {
   const [formData, setFormData] = useState(initialData);
   const { books } = useContext(BooksContext);
   const navigate = useNavigate();
@@ -95,8 +94,6 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
                   required={field.required}
                   value={formData[field.name]}
                   onChange={handleChange}
-                  error={!!errors[field.name]}
-                  helperText={errors[field.name]}
                 />
               )}
             </FormControl>

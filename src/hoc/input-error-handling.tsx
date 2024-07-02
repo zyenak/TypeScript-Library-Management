@@ -2,18 +2,21 @@ import React, { ComponentType, useState } from 'react';
 import CustomForm, { CustomFormProps } from '../components/forms/custom-form';
 
 // Define a type for props that the HOC accepts
-interface WithInputValidationProps {
-  // Optionally, you can add any props that the HOC may require
+interface WithInputValidationProps {}
+
+// Define the type for the errors object
+interface Errors {
+  [key: string]: string;
 }
 
 // Define the HOC function
 const withInputValidation = <P extends CustomFormProps>(WrappedComponent: ComponentType<P>) => {
   const WithInputValidation: React.FC<P & WithInputValidationProps> = (props) => {
-    const [errors, setErrors] = useState<any>({});
+    const [errors, setErrors] = useState<Errors>({});
 
     const validateForm = (formData: any, fields: CustomFormProps['fields']) => {
-      const newErrors: any = {};
-      fields.forEach((field: any) => {
+      const newErrors: Errors = {};
+      fields.forEach((field) => {
         const { name, required, type } = field;
         const value = formData[name];
 
@@ -29,7 +32,18 @@ const withInputValidation = <P extends CustomFormProps>(WrappedComponent: Compon
       return Object.values(newErrors).every((error) => error === '');
     };
 
-    return <WrappedComponent {...props as P} validateForm={validateForm} errors={errors} />;
+    return (
+      <>
+        <WrappedComponent {...props as P} validateForm={validateForm} />
+        {Object.keys(errors).length > 0 && (
+          <div style={{ color: 'red', marginTop: '10px' }}>
+            {Object.values(errors).map((error, index) => (
+              error && <div key={index}>{error}</div>
+            ))}
+          </div>
+        )}
+      </>
+    );
   };
 
   return WithInputValidation;

@@ -11,15 +11,13 @@ function App() {
     <div className="App">
        <BooksProvider>
       <UserProvider>
-       
-        <Suspense fallback={null}>
+        <Suspense fallback={null}>  
           <Container className="page-container">
             <Router>
               <AppLayout />
             </Router>
           </Container>
         </Suspense>
-      
       </UserProvider>
       </BooksProvider>
     </div>

@@ -12,7 +12,6 @@ const BooksList: React.FC = () => {
   const [activeBookIsbn, setActiveBookIsbn] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("Borrowed Books:", borrowedBooks);
   }, [borrowedBooks]);
 
   const handleBookBorrow = (book: any) => {

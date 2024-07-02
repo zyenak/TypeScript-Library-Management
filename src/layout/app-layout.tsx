@@ -13,7 +13,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useUser } from "../context/user-context";
-import { Route, Routes, Navigate, Link, useNavigate, useParams } from "react-router-dom";
+import { Route, Routes, Navigate, Link, useNavigate } from "react-router-dom";
 import AdbIcon from "@mui/icons-material/Adb";
 import BooksList from "../containers/dashboard";
 import { LoginDialog } from "../components/login/login-dialog";
@@ -21,7 +21,7 @@ import { BooksContext } from "../context/books-context";
 import CustomForm, { FormField } from "../components/forms/custom-form";
 import WithAdminProtector from "../middleware/admin-protector";
 import { WithLoginProtector } from "../middleware/login-protector";
-import withInputValidation from '../HOC/input-error-handling';
+import withInputValidation from '../hoc/input-error-handling';
 
 const AppLayout: React.FC = () => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
@@ -184,9 +184,10 @@ const AppLayout: React.FC = () => {
                   initialData={initialBookState}
                   toUpdate={false}
                   onSubmit={handleBookSubmit}
-                  fields={bookFields} validateForm={function (formData: any, fields: FormField[]): boolean {
+                  fields={bookFields} 
+                  validateForm={function (formData: any, fields: FormField[]): boolean {
                     throw new Error("Function not implemented.");
-                  } } errors={undefined}                />
+                  } }              />
               </WithAdminProtector>
             </WithLoginProtector>
           }
@@ -201,9 +202,10 @@ const AppLayout: React.FC = () => {
                   initialData={initialUserState}
                   toUpdate={false}
                   onSubmit={handleUserSubmit}
-                  fields={userFields} validateForm={function (formData: any, fields: FormField[]): boolean {
+                  fields={userFields} 
+                  validateForm={function (formData: any, fields: FormField[]): boolean {
                     throw new Error("Function not implemented.");
-                  } } errors={undefined}                />
+                  } }              />
               </WithAdminProtector>
             </WithLoginProtector>
           }
@@ -218,9 +220,10 @@ const AppLayout: React.FC = () => {
                   initialData={initialBookState}
                   toUpdate={true}
                   onSubmit={handleBookSubmit}
-                  fields={bookFields} validateForm={function (formData: any, fields: FormField[]): boolean {
+                  fields={bookFields} 
+                  validateForm={function (formData: any, fields: FormField[]): boolean {
                     throw new Error("Function not implemented.");
-                  } } errors={undefined}                />
+                  } }               />
               </WithAdminProtector>
             </WithLoginProtector>
           }
