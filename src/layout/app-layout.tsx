@@ -93,7 +93,9 @@ const AppLayout: React.FC = () => {
               fields={bookFields}
               validateForm={function (formData: any, fields: FormField[]): boolean {
                 throw new Error("Function not implemented.");
-              }} />
+              }}
+              errors={undefined}
+            />
           </WithAdminProtector>
         </WithLoginProtector>
       ),
@@ -111,7 +113,9 @@ const AppLayout: React.FC = () => {
               fields={userFields}
               validateForm={function (formData: any, fields: FormField[]): boolean {
                 throw new Error("Function not implemented.");
-              }} />
+              }}
+              errors={undefined}
+            />
           </WithAdminProtector>
         </WithLoginProtector>
       ),
@@ -129,7 +133,9 @@ const AppLayout: React.FC = () => {
               fields={bookFields}
               validateForm={function (formData: any, fields: FormField[]): boolean {
                 throw new Error("Function not implemented.");
-              }} />
+              }}
+              errors={undefined}
+            />
           </WithAdminProtector>
         </WithLoginProtector>
       ),
@@ -140,14 +146,14 @@ const AppLayout: React.FC = () => {
     <>
       <AppHeader onLoginClick={() => setOpenLoginDialog(true)} />
       <Routes>
-      {publicRoutes.map((route, index) => (
-        <Route key={index} path={route.path} element={route.element} />
-      ))}
-      {privateRoutes.map((route, index) => (
-        <Route key={index} path={route.path} element={route.element} />
-      ))}
-      <Route path="*" element={<Navigate to="/books" replace />} />
-    </Routes>
+        {publicRoutes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element} />
+        ))}
+        {privateRoutes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element} />
+        ))}
+        <Route path="*" element={<Navigate to="/books" replace />} />
+      </Routes>
       <LoginDialog
         open={openLoginDialog}
         handleSubmit={handleLoginSubmit}
