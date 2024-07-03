@@ -17,7 +17,7 @@ const BookFormContainer: React.FC = () => {
     } else {
       addBook(data);
     }
-    navigate("/books");
+    navigate("/");
   };
 
   const bookFields: FormField[] = [

@@ -20,7 +20,7 @@ const EditBookFormContainer: React.FC = () => {
 
   const handleBookSubmit = (data: any) => {
     updateBook(data);
-    navigate("/books");
+    navigate("");
   };
 
   const bookFields: FormField[] = [

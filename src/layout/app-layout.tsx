@@ -29,73 +29,54 @@ const AppLayout: React.FC = () => {
 
 
   // Define public and private routes as arrays
-  const privateRoutes = [
-    { path: "admin", element: <Dashboard /> },
-    { path: "books", element: <Outlet />, 
-      children: [
-        { path: "", element: <Dashboard /> }, 
-        { path: "add", element: <BookFormContainer /> }, 
-        { path: ":bookIsbn", element: <Outlet />, 
-          children: [
-            { path: "edit", element: <EditBookFormContainer /> },
-          ]
-        },
-      ]
-    },
-    { path: "books", element: <Outlet />, 
-      children: [
-        { path: "", element: <Dashboard /> }, 
-      ]
-    }
-  ];
+  const publicRoutes = [
+  { path: "/", element: <Dashboard /> },
+];
 
-  const RouteComponent = () => (
-    <>
-      <Outlet />
-    </>
-  )
-  const pv = [
-    {
-      path: "admin",
-      element: (
-        <RouteComponent />
-      ),
-      subroutes: [
-        { path: "books", element: <Dashboard /> },
-        // { path: "books", element: <Outlet /> },
-        // { path: "users", element: <Outlet /> },
-      ],
-    },
-    {
-      path: "books",
-      subRoutes: [
-        { path: "add", element: <BookFormContainer /> },
-        { path: ":bookIsbn/edit", element: <EditBookFormContainer /> },
-      ],
-    },
-    {
-      path: "admin/users",
-      subRoutes: [
-        { path: "add", element: <UserFormContainer /> },
-      ],
-    },
-  ];
+const privateRoutes = [
+  {
+    path: "/admin/books/add",
+    element: (
+      <WithLoginProtector>
+        <WithAdminProtector>
+          <BookFormContainer />
+        </WithAdminProtector>
+      </WithLoginProtector>
+    ),
+  },
+  {
+    path: "/admin/users/add",
+    element: (
+      <WithLoginProtector>
+        <WithAdminProtector>
+          <UserFormContainer />
+        </WithAdminProtector>
+      </WithLoginProtector>
+    ),
+  },
+  {
+    path: "/admin/books/:bookIsbn/edit",
+    element: (
+      <WithLoginProtector>
+        <WithAdminProtector>
+          <EditBookFormContainer />
+        </WithAdminProtector>
+      </WithLoginProtector>
+    ),
+  },
+];
 
-  return (
+return (
     <>
       <AppHeader onLoginClick={() => setOpenLoginDialog(true)} />
       <Routes>
-
-        {privateRoutes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element}>
-            {route.children && route.children.map((childRoute, idx) => (
-              //wrap with protected routes
-              <Route key={idx} path={childRoute.path} element={childRoute.element} />
-            ))}
-          </Route>
+        {publicRoutes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element} />
         ))}
-
-
+        {privateRoutes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element} />
+        ))}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <LoginDialog
         open={openLoginDialog}
@@ -115,42 +96,7 @@ export default AppLayout;
 
 
 
-// const publicRoutes = [
-//   { path: "/books", element: <Dashboard /> },
-// ];
 
-// const privateRoutes = [
-//   {
-//     path: "/admin/books/add",
-//     element: (
-//       <WithLoginProtector>
-//         <WithAdminProtector>
-//           <BookFormContainer />
-//         </WithAdminProtector>
-//       </WithLoginProtector>
-//     ),
-//   },
-//   {
-//     path: "/admin/users/add",
-//     element: (
-//       <WithLoginProtector>
-//         <WithAdminProtector>
-//           <UserFormContainer />
-//         </WithAdminProtector>
-//       </WithLoginProtector>
-//     ),
-//   },
-//   {
-//     path: "/admin/books/:bookIsbn/edit",
-//     element: (
-//       <WithLoginProtector>
-//         <WithAdminProtector>
-//           <EditBookFormContainer />
-//         </WithAdminProtector>
-//       </WithLoginProtector>
-//     ),
-//   },
-// ];
 
 // return (
 //   <>

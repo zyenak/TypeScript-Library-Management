@@ -52,7 +52,7 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
     const isValid = validateForm(formData, fields);
     if (isValid) {
       onSubmit(formData, toUpdate);
-      navigate('/books');
+      navigate('/');
     }
   };
 
