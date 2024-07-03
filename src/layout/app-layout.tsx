@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUser } from "../context/user-context";
-import { Route, Routes, Navigate, Link, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, Navigate, Routes, Route } from 'react-router-dom';
 import Dashboard from "../containers/dashboard";
 import { LoginDialog } from "../components/login/login-dialog";
 import WithAdminProtector from "../middleware/admin-protector";
@@ -29,53 +29,48 @@ const AppLayout: React.FC = () => {
 
 
   // Define public and private routes as arrays
-  const publicRoutes = [
-  { path: "/", element: <Dashboard /> },
-];
 
-const privateRoutes = [
-  {
-    path: "/admin/books/add",
-    element: (
-      <WithLoginProtector>
-        <WithAdminProtector>
-          <BookFormContainer />
-        </WithAdminProtector>
-      </WithLoginProtector>
-    ),
-  },
-  {
-    path: "/admin/users/add",
-    element: (
-      <WithLoginProtector>
-        <WithAdminProtector>
-          <UserFormContainer />
-        </WithAdminProtector>
-      </WithLoginProtector>
-    ),
-  },
-  {
-    path: "/admin/books/:bookIsbn/edit",
-    element: (
-      <WithLoginProtector>
-        <WithAdminProtector>
-          <EditBookFormContainer />
-        </WithAdminProtector>
-      </WithLoginProtector>
-    ),
-  },
-];
+  const publicRoutes = [
+    { path: "/", element: <Dashboard /> },
+  ];
+  
+  const privateRoutes = [
+    {
+      path: "admin",
+      element: (
+        <WithLoginProtector>
+          <WithAdminProtector>
+            <Outlet />
+          </WithAdminProtector>
+        </WithLoginProtector>
+      ),
+      children: [
+        { path: "books/add", element: <BookFormContainer /> },
+        { path: "users/add", element: <UserFormContainer /> },
+        { path: "books/:bookIsbn/edit", element: <EditBookFormContainer /> },
+      ],
+    },
+  ];
+  
 
 return (
     <>
       <AppHeader onLoginClick={() => setOpenLoginDialog(true)} />
       <Routes>
+        <Route path="/" element={<Dashboard />} />
+        {/* Public Routes */}
         {publicRoutes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}
+        {/* Private Routes */}
         {privateRoutes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
+          <Route key={index} path={route.path} element={route.element}>
+            {route.children?.map((childRoute, childIndex) => (
+              <Route key={childIndex} path={childRoute.path} element={childRoute.element} />
+            ))}
+          </Route>
         ))}
+        {/* Default Route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <LoginDialog
@@ -89,31 +84,3 @@ return (
 };
 
 export default AppLayout;
-
-
-
-
-
-
-
-
-
-// return (
-//   <>
-//     <AppHeader onLoginClick={() => setOpenLoginDialog(true)} />
-//     <Routes>
-//       {publicRoutes.map((route, index) => (
-//         <Route key={index} path={route.path} element={route.element} />
-//       ))}
-//       {privateRoutes.map((route, index) => (
-//         <Route key={index} path={route.path} element={route.element} />
-//       ))}
-//       <Route path="*" element={<Navigate to="/books" replace />} />
-//     </Routes>
-//     <LoginDialog
-//       open={openLoginDialog}
-//       handleSubmit={handleLoginSubmit}
-//       handleClose={handleLoginClose}
-//     />
-//   </>
-// );
