@@ -6,7 +6,7 @@ import { BooksContext } from "../context/books-context";
 import CustomTable from "../components/custom-table/custom-table";
 import classes from "./styles.module.css";
 
-const BooksList: React.FC = () => {
+const Dashboard: React.FC = () => {
   const { isAdmin, user, borrowBook, returnBook, borrowedBooks, users, deleteUser } = useUser();
   const { books, setBooks } = useContext(BooksContext);
   const [activeBookIsbn, setActiveBookIsbn] = useState<string | null>(null);
@@ -42,7 +42,7 @@ const BooksList: React.FC = () => {
       header: "Actions",
       render: (book: any) => (
         <div className={classes.actionsContainer}>
-          {!isAdmin && book.quantity > 0 && (
+          {!isAdmin && user && book.quantity > 0 && (
             <Button
               variant="contained"
               color="primary"
@@ -200,4 +200,4 @@ const BooksList: React.FC = () => {
   );
 };
 
-export default BooksList;
+export default Dashboard;

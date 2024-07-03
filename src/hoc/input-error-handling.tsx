@@ -32,7 +32,18 @@ const withInputValidation = <P extends CustomFormProps>(WrappedComponent: Compon
       return Object.values(newErrors).every((error) => error === '');
     };
 
-    return <WrappedComponent {...props as P} validateForm={validateForm} errors={errors} />;
+    return (
+        <>
+          <WrappedComponent {...props as P} validateForm={validateForm} />
+          {Object.keys(errors).length > 0 && (
+            <div style={{ color: 'red', marginTop: '10px' }}>
+              {Object.values(errors).map((error, index) => (
+                error && <div key={index}>{error}</div>
+              ))}
+            </div>
+          )}
+        </>
+      );
   };
 
   return WithInputValidation;

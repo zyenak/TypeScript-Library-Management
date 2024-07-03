@@ -9,16 +9,16 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-       <BooksProvider>
-      <UserProvider>
-        <Suspense fallback={null}>  
-          <Container className="page-container">
-            <Router>
-              <AppLayout />
-            </Router>
-          </Container>
-        </Suspense>
-      </UserProvider>
+      <BooksProvider>
+        <UserProvider>
+          <Suspense fallback={null}>
+            <Container className="page-container">
+              <Router>
+                <AppLayout />
+              </Router>
+            </Container>
+          </Suspense>
+        </UserProvider>
       </BooksProvider>
     </div>
   );

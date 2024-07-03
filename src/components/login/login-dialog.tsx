@@ -33,6 +33,8 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
   const onSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     handleSubmit(username, password);
+    setUsername("");
+    setPassword("");
   };
 
   const handleEnterKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
