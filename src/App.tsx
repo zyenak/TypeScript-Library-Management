@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { createBrowserRouter, RouterProvider, Routes, Route, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { Container } from "@mui/material";
 import AppLayout from "./layout/app-layout";
 import { UserProvider } from "./context/user-context";

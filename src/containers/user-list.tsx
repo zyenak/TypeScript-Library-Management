@@ -36,9 +36,8 @@ const UserFormContainer: React.FC = () => {
             toUpdate={false}
             onSubmit={handleUserSubmit}
             fields={userFields}
-            validateForm={function (formData: any, fields: FormField[]): boolean {
-                throw new Error("Function not implemented.");
-            }}
+            validateForm={(formData: any) => true} 
+            errors={{}}
         />
     );
 };

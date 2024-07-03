@@ -41,15 +41,16 @@ const EditBookFormContainer: React.FC = () => {
     };
 
     return (
+
+
         <ValidatedBookForm
             formType="book"
             initialData={initialData}
             toUpdate={true}
             onSubmit={handleBookSubmit}
             fields={bookFields}
-            validateForm={function (formData: any, fields: FormField[]): boolean {
-                throw new Error("Function not implemented.");
-            }}
+            validateForm={(formData: any) => true} 
+            errors={{}} 
         />
     );
 };

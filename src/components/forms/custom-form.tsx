@@ -20,20 +20,21 @@ export type FormField =
   | { label: string; name: string; type: 'text' | 'number' | 'password'; required: boolean; options?: undefined }
   | { label: string; name: string; type: 'select'; required: boolean; options: string[] };
 
-  export interface CustomFormProps {
-    formType: 'book' | 'user';
-    initialData: any;
-    toUpdate: boolean;
-    onSubmit: (data: any, toUpdate: boolean) => void; // Remove bookIsbn parameter from onSubmit
-    fields: FormField[];
-    validateForm: (formData: any, fields: FormField[]) => boolean;
-  }
+export interface CustomFormProps {
+  formType: 'book' | 'user';
+  initialData: any;
+  toUpdate: boolean;
+  onSubmit: (data: any, toUpdate: boolean) => void; 
+  fields: FormField[];
+  validateForm: (formData: any, fields: FormField[]) => boolean;
+  errors: any;
+}
 
-const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate, onSubmit, fields, validateForm }) => {
+const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate, onSubmit, fields, validateForm, errors }) => {
   const [formData, setFormData] = useState(initialData);
   const { books } = useContext(BooksContext);
   const navigate = useNavigate();
-  const { bookIsbn } = useParams<{ bookIsbn?: string }>(); // Make bookIsbn optional
+  const { bookIsbn } = useParams<{ bookIsbn?: string }>(); 
 
   useEffect(() => {
     setFormData(initialData);
@@ -53,6 +54,7 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
     if (isValid) {
       onSubmit(formData, toUpdate);
       navigate('/');
+
     }
   };
 
@@ -94,6 +96,8 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
                   required={field.required}
                   value={formData[field.name]}
                   onChange={handleChange}
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]}
                 />
               )}
             </FormControl>
@@ -117,5 +121,4 @@ const CustomForm: React.FC<CustomFormProps> = ({ formType, initialData, toUpdate
     </Container>
   );
 };
-
 export default CustomForm;
