@@ -8,7 +8,7 @@ import classes from "./styles.module.css";
 
 const Dashboard: React.FC = () => {
   const { isAdmin, user, borrowBook, returnBook, borrowedBooks, users, deleteUser } = useUser();
-  const { books, setBooks } = useContext(BooksContext);
+  const { books, setBooks, deleteBook } = useContext(BooksContext);
   const [activeBookIsbn, setActiveBookIsbn] = useState<string | null>(null);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleDeleteBook = (isbn: string) => {
-    setBooks(books.filter((book) => book.isbn !== isbn));
+    deleteBook(isbn);
   };
 
   const handleDeleteUser = (userId: string) => {

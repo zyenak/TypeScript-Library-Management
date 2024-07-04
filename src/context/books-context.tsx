@@ -1,6 +1,7 @@
-import React, { createContext, useState, FC, ReactNode, useContext } from "react";
+import React, { createContext, useState, FC, ReactNode } from "react";
+import { useSnackbar } from "./snackbar-context";
 
-// Define the book interface
+
 export interface Book {
   isbn: string;
   name: string;
@@ -9,7 +10,6 @@ export interface Book {
   quantity: number;
 }
 
-// Define the context type
 export interface BooksContextType {
   books: Book[];
   setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
@@ -18,7 +18,7 @@ export interface BooksContextType {
   deleteBook: (isbn: string) => void;
 }
 
-// Initialize context
+
 export const BooksContext = createContext<BooksContextType>({
   books: [],
   setBooks: () => {},
@@ -27,8 +27,9 @@ export const BooksContext = createContext<BooksContextType>({
   deleteBook: () => {},
 });
 
-// Define BooksProvider component
+
 export const BooksProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { showMessage } = useSnackbar()
   const [books, setBooks] = useState<Book[]>([
     {
       isbn: "123456789",
@@ -49,6 +50,7 @@ export const BooksProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const addBook = (newBook: Book) => {
     setBooks((prevBooks) => [...prevBooks, newBook]);
+    showMessage("New Book Added Successfully");
   };
 
   const updateBook = (updatedBook: Book) => {
@@ -57,10 +59,12 @@ export const BooksProvider: FC<{ children: ReactNode }> = ({ children }) => {
         book.isbn === updatedBook.isbn ? updatedBook : book
       )
     );
+    showMessage("Book Updated Successfully");
   };
 
   const deleteBook = (isbn: string) => {
     setBooks((prevBooks) => prevBooks.filter((book) => book.isbn !== isbn));
+    showMessage("Book Deleted Successfully");
   };
 
   const contextValue: BooksContextType = {

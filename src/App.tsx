@@ -10,6 +10,7 @@ import { WithLoginProtector } from "./middleware/login-protector";
 import BookFormContainer from "./containers/add-book";
 import UserFormContainer from "./containers/user-list";
 import EditBookFormContainer from "./containers/edit-book";
+import { SnackbarProvider } from "./context/snackbar-context";
 
 const publicRoutes = [
   { path: "/", element: <Dashboard /> },
@@ -47,6 +48,7 @@ const router = createBrowserRouter([
 const App: React.FC = () => {
   return (
     <div className="App">
+      <SnackbarProvider>
       <BooksProvider>
         <UserProvider>
           <Suspense fallback={null}>
@@ -56,6 +58,7 @@ const App: React.FC = () => {
           </Suspense>
         </UserProvider>
       </BooksProvider>
+      </SnackbarProvider>
     </div>
   );
 };
