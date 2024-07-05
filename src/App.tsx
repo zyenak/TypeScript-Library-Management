@@ -11,6 +11,8 @@ import BookFormContainer from "./containers/add-book";
 import UserFormContainer from "./containers/user-list";
 import EditBookFormContainer from "./containers/edit-book";
 import { SnackbarProvider } from "./context/snackbar-context";
+import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorBombFallback } from './components/fallbacks/error';
 
 const publicRoutes = [
   { path: "/", element: <Dashboard /> },
@@ -48,6 +50,9 @@ const router = createBrowserRouter([
 const App: React.FC = () => {
   return (
     <div className="App">
+      <ErrorBoundary
+            FallbackComponent={ErrorBombFallback}
+        >
       <SnackbarProvider>
       <BooksProvider>
         <UserProvider>
@@ -59,6 +64,7 @@ const App: React.FC = () => {
         </UserProvider>
       </BooksProvider>
       </SnackbarProvider>
+      </ErrorBoundary>
     </div>
   );
 };
