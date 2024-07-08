@@ -49,15 +49,15 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <SnackbarProvider>
-      <BooksProvider>
-        <UserProvider>
-          <Suspense fallback={null}>
-            <Container className="page-container">
-              <RouterProvider router={router} />
-            </Container>
-          </Suspense>
-        </UserProvider>
-      </BooksProvider>
+        <BooksProvider>
+          <UserProvider>
+            <Suspense fallback={null}>
+              <Container className="page-container">
+                <RouterProvider router={router} />
+              </Container>
+            </Suspense>
+          </UserProvider>
+        </BooksProvider>
       </SnackbarProvider>
     </div>
   );
