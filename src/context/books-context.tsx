@@ -1,5 +1,6 @@
 import React, { createContext, useState, FC, ReactNode } from "react";
 import { useSnackbar } from "./snackbar-context";
+import { useErrorBoundary } from 'react-error-boundary';
 
 
 export interface Book {
@@ -30,6 +31,7 @@ export const BooksContext = createContext<BooksContextType>({
 
 export const BooksProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { showMessage } = useSnackbar()
+  const { showBoundary } = useErrorBoundary();
   const [books, setBooks] = useState<Book[]>([
     {
       isbn: "123456789",
@@ -48,6 +50,15 @@ export const BooksProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // Add more mock books as needed
   ]);
 
+
+  const handleExplode = () => {
+    try {
+        throw new Error('💥 KABOOM 💥');
+    } catch (error) {
+        showBoundary(error);
+    }
+};
+
   const addBook = (newBook: Book) => {
     setBooks((prevBooks) => [...prevBooks, newBook]);
     showMessage("New Book Added Successfully");
@@ -63,8 +74,9 @@ export const BooksProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const deleteBook = (isbn: string) => {
-    setBooks((prevBooks) => prevBooks.filter((book) => book.isbn !== isbn));
-    showMessage("Book Deleted Successfully");
+    // setBooks((prevBooks) => prevBooks.filter((book) => book.isbn !== isbn));
+    // showMessage("Book Deleted Successfully");
+    handleExplode();
   };
 
   const contextValue: BooksContextType = {
